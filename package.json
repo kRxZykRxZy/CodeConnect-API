@@ -1,0 +1,21 @@
+{
+	"name": "CodeConnectBackend",
+	"version": "1.0.0",
+	"description": "Backend server for CodeConnect application",
+	"main": "src/server/conf.js",
+	"scripts": {
+		"start": "node src/server/conf.js",
+		"dev": "nodemon src/server/conf.js"
+	},
+	"author": "CodeConnect Team",
+	"license": "Apache-2.0",
+	"dependencies": {
+		"body-parser": "^2.2.1",
+		"cors": "^2.8.5",
+		"express": "^5.2.1",
+		"pg": "^8.16.3"
+	},
+	"devDependencies": {
+		"nodemon": "^3.0.1"
+	}
+}
