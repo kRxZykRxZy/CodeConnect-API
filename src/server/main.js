@@ -1,25 +1,34 @@
 const express = require('express');
-const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const path = require('path');
 
 const app = express();
 
 // Middleware setup
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(cors());
 
-app.all('/:route/*', (req, res) => {
+app.all('/:route/*', async (req, res) => {
     const route = req.params.route; 
-    const subPath = req.params[0]; // catches everything after the first segment
+    const subPath = req.params[0] || ''; // catches everything after /:route/
 
-    // Fix precedence to load the correct file
-    const modulePath = '../routes/' + route + (subPath ? `/${subPath}` : '');
-    
+    // Build module path safely
+    let modulePath = path.join(__dirname, '..', 'routes', route, subPath);
+
     try {
+        // If subPath contains a number, load the "id" module
+        if (/\d/.test(subPath)) {
+            modulePath = path.join(__dirname, '..', 'routes', route, 'id');
+        }
+
         const { main } = require(modulePath);
+
         if (typeof main === 'function') {
-            main(req, res);
+            await main(req, res);
         } else {
             res.status(500).send('Main function not found in the module.');
         }

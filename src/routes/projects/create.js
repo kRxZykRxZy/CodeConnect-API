@@ -1,19 +1,26 @@
-const { query } = require('../../sql/conf');
+const { query } = require('../../sql/config');
 
 async function main(req, res) {
-    if (!name || !description || !startDate || !endDate) {
-        return res.status(400).json({ error: 'Missing required fields' });
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
     }
     const insertQuery = `
-        INSERT INTO Projects (Id, Author, Title, Description, Instructions, LastModified, CreatedOn, Stats)
-        VALUES (NEWID(), @Author, @Title, @Description, @Instructions, GETDATE(), GETDATE(), @Stats)
+        INSERT INTO Projects (Id, Author, Title, Description, Instructions, LastModified, CreatedOn, Stats, Files)
+        VALUES (NEWID(), @Author, @Title, @Description, @Instructions, GETDATE(), GETDATE(), @Stats, '{}')
     `;
+    const cookie = req.cookies['session_id'];
+    const usernameQuery = 'SELECT Username FROM Sessions WHERE SessionId = @SessionId';
+    const users = await query(usernameQuery, { SessionId: cookie });
+    if (users.length === 0) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const username = users[0].username;
     const params = {
-        Author: req.headers['x-user-id'] || 'anonymous',
-        Title: name,
-        Description: description,
-        Instructions: `Start Date: ${startDate}\nEnd Date: ${endDate}`,
-        Stats: JSON.stringify({ views: 0, likes: 0 }),
+        Author: username,
+        Title: 'Untitled Project',
+        Description: 'No description provided.',
+        Instructions: `No instructions provided.`,
+        Stats: JSON.stringify({ views: 0, likes: 0, upvotes: 0 }),
     };
     try {
         await query(insertQuery, params);

@@ -2,15 +2,17 @@
 	"name": "CodeConnectBackend",
 	"version": "1.0.0",
 	"description": "Backend server for CodeConnect application",
-	"main": "src/server/conf.js",
+	"main": "src/server/main.js",
 	"scripts": {
-		"start": "node src/server/conf.js",
-		"dev": "nodemon src/server/conf.js"
+		"start": "pnpm node src/server/main.js",
+		"dev": "pnpm nodemon src/server/main.js"
 	},
 	"author": "CodeConnect Team",
 	"license": "Apache-2.0",
 	"dependencies": {
+		"argon2": "^0.44.0",
 		"body-parser": "^2.2.1",
+		"cookie-parser": "^1.4.7",
 		"cors": "^2.8.5",
 		"express": "^5.2.1",
 		"pg": "^8.16.3"
