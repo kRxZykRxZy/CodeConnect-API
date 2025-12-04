@@ -18,12 +18,10 @@ app.all(/.*/, async (req, res) => {
     const route = urlPath[0] || "base";
     const subPath = urlPath.slice(1).join('/');
 
-    // Extract numeric segments
-    const numberParams = urlPath
+    // Extract the first numeric segment
+    const firstNumberParam = urlPath
         .map(s => Number(s))
-        .filter(n => !isNaN(n))
-        .replace("[", "")
-        .replace("]", "");
+        .find(n => !isNaN(n));
 
     try {
         let modulePath;
@@ -33,8 +31,8 @@ app.all(/.*/, async (req, res) => {
             modulePath = path.join(__dirname, '..', 'routes', 'base', route);
         }
 
-        // Case 2: contains numbers → use id handler
-        else if (numberParams.length > 0) {
+        // Case 2: contains a number → use id handler
+        else if (firstNumberParam !== undefined) {
             modulePath = path.join(__dirname, '..', 'routes', route, 'id');
         }
 
@@ -47,7 +45,7 @@ app.all(/.*/, async (req, res) => {
         const { main } = require(modulePath);
 
         if (typeof main === 'function') {
-            req.numberParams = numberParams;
+            req.numberParam = firstNumberParam; // store single number
             req.route = route;
             await main(req, res);
         } else {
@@ -58,7 +56,7 @@ app.all(/.*/, async (req, res) => {
         res.status(500).json({
             error: error.message,
             route,
-            numberParams,
+            numberParam: firstNumberParam,
             attemptedPath: req.path
         });
     }
