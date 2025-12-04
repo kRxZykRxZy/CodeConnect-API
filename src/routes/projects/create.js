@@ -9,6 +9,9 @@ async function main(req, res) {
         VALUES (NEWID(), @Author, @Title, @Description, @Instructions, GETDATE(), GETDATE(), @Stats, 'false', '{}')
     `;
     const cookie = req.cookies['session_id'];
+    if (!cookie) {
+        return res.send(403).json({ "error": "Unauthorized" });
+    } 
     const usernameQuery = 'SELECT Username FROM Sessions WHERE SessionId = @SessionId';
     const users = await query(usernameQuery, { SessionId: cookie });
     if (users.length === 0) {
