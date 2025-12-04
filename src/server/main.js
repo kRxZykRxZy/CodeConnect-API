@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors());
 
-app.all("*", async (req, res) => {
+app.all(/.*/, async (req, res) => {
     const urlPath = req.path.split('/').filter(Boolean);
 
     const route = urlPath[0] || "base";
