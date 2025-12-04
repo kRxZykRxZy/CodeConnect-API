@@ -21,7 +21,9 @@ app.all(/.*/, async (req, res) => {
     // Extract numeric segments
     const numberParams = urlPath
         .map(s => Number(s))
-        .filter(n => !isNaN(n));
+        .filter(n => !isNaN(n))
+        .replace("[", "")
+        .replace("]", "");
 
     try {
         let modulePath;
