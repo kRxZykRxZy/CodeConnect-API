@@ -5,8 +5,8 @@ async function main(req, res) {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
     const insertQuery = `
-        INSERT INTO Projects (Id, Author, Title, Description, Instructions, LastModified, CreatedOn, Stats, Files)
-        VALUES (NEWID(), @Author, @Title, @Description, @Instructions, GETDATE(), GETDATE(), @Stats, '{}')
+        INSERT INTO Projects (Id, Author, Title, Description, Instructions, LastModified, CreatedOn, Stats, Shared, Files)
+        VALUES (NEWID(), @Author, @Title, @Description, @Instructions, GETDATE(), GETDATE(), @Stats, 'false', '{}')
     `;
     const cookie = req.cookies['session_id'];
     const usernameQuery = 'SELECT Username FROM Sessions WHERE SessionId = @SessionId';
